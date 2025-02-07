@@ -389,13 +389,11 @@ with open(file_path, "a") as f:
             siteN = site["site"]
             siteNSFW = site["nsfw"]
             siteErrors = site["errorMessage"]
-            i = 0 
-            
-            for item in uname_list:
-                scanr =  Startscan(
+            for username in uname_list:
+                scanr = Startscan(
                     modes,
                     siteN,
-                    uname_list[i],
+                    username,
                     cError,
                     ec,
                     f,
@@ -409,8 +407,8 @@ with open(file_path, "a") as f:
                     randomheaders,
                     webhook_url
                 )
-                i += 1
-                results.append(str(scanr))
+                if scanr is not None:
+                    results.append(str(scanr))
 
                 
 

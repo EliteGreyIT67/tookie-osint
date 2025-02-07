@@ -49,43 +49,17 @@ class CliGui:
             self.layout.split_column(
                 Layout(self.draw_header(), size=10),
                 Layout(self.draw_menu(options, selected)),
-                Layout(self.draw_status("Use 'w' to move up, 's' to move down, Enter to select"), size=3)
+                Layout(self.draw_status("Press ↑↓ to navigate, Enter to select"), size=3)
             )
             self.console.print(self.layout)
             
-            try:
-                import sys
-                import tty
-                import termios
-                
-                def getch():
-                    fd = sys.stdin.fileno()
-                    old_settings = termios.tcgetattr(fd)
-                    try:
-                        tty.setraw(sys.stdin.fileno())
-                        ch = sys.stdin.read(1)
-                    finally:
-                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-                    return ch
-                
-                key = getch()
-                
-                if key == 'w':  # Up
-                    selected = (selected - 1) % len(options)
-                elif key == 's':  # Down
-                    selected = (selected + 1) % len(options)
-                elif key == '\r':  # Enter
-                    return options[selected]
-                
-            except (ImportError, termios.error):
-                # Fallback for environments where termios is not available
-                key = input().lower()
-                if key == 'w':
-                    selected = (selected - 1) % len(options)
-                elif key == 's':
-                    selected = (selected + 1) % len(options)
-                elif key == '':  # Enter key
-                    return options[selected]
+            key = input()  # Simple input for demonstration
+            if key == "w":  # Up
+                selected = (selected - 1) % len(options)
+            elif key == "s":  # Down
+                selected = (selected + 1) % len(options)
+            elif key == "\n":  # Enter
+                return options[selected]
 
 def run_cli_gui():
     gui = CliGui()

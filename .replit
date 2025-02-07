@@ -1,8 +1,8 @@
-modules = ["python-3.10:v18-20230807-322e88b"]
+modules = ["python-3.12", "web", "nix"]
 run = "python3 tookie-osint -w"
 
 [nix]
-channel = "stable-23_05"
+channel = "stable-24_05"
 
 [unitTest]
 language = "python3"
@@ -13,6 +13,7 @@ requiredFiles = [".replit", "replit.nix"]
 [deployment]
 deploymentTarget = "static"
 publicDir = "./webui"
+run = ["sh", "-c", "python3 tookie-osint -w"]
 
 [[ports]]
 localPort = 5000

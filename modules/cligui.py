@@ -5,6 +5,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.layout import Layout
 from rich.text import Text
+import os
 
 class CliGui:
     def __init__(self):
@@ -40,6 +41,7 @@ class CliGui:
             "Show All Results",
             "Show NSFW Sites",
             "Configure Settings",
+            "WebUI Mode",
             "Exit"
         ]
         
@@ -49,17 +51,53 @@ class CliGui:
             self.layout.split_column(
                 Layout(self.draw_header(), size=10),
                 Layout(self.draw_menu(options, selected)),
-                Layout(self.draw_status("Press ↑↓ to navigate, Enter to select"), size=3)
+                Layout(self.draw_status("Use 'w' to move up, 's' to move down, Enter to select"), size=3)
             )
             self.console.print(self.layout)
             
-            key = input()  # Simple input for demonstration
-            if key == "w":  # Up
-                selected = (selected - 1) % len(options)
-            elif key == "s":  # Down
-                selected = (selected + 1) % len(options)
-            elif key == "\n":  # Enter
-                return options[selected]
+            try:
+                import sys
+                import tty
+                import termios
+                
+                def getch():
+                    fd = sys.stdin.fileno()
+                    old_settings = termios.tcgetattr(fd)
+                    try:
+                        tty.setraw(sys.stdin.fileno())
+                        ch = sys.stdin.read(1)
+                    finally:
+                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                    return ch
+                
+                key = getch()
+                
+                if key == 'w':  # Up
+                    selected = (selected - 1) % len(options)
+                elif key == 's':  # Down
+                    selected = (selected + 1) % len(options)
+                elif key == '\r':  # Enter
+                    if options[selected] == "WebUI Mode":
+                        if os.name == "nt":
+                            os.system("python.exe webui/webui.py")
+                        else:
+                            os.system("python3 webui/webui.py")
+                    return options[selected]
+                
+            except (ImportError, termios.error):
+                # Fallback for environments where termios is not available
+                key = input().lower()
+                if key == 'w':
+                    selected = (selected - 1) % len(options)
+                elif key == 's':
+                    selected = (selected + 1) % len(options)
+                elif key == '':  # Enter key
+                    if options[selected] == "WebUI Mode":
+                        if os.name == "nt":
+                            os.system("python.exe webui/webui.py")
+                        else:
+                            os.system("python3 webui/webui.py")
+                    return options[selected]
 
 def run_cli_gui():
     gui = CliGui()

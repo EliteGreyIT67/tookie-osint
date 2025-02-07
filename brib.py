@@ -100,9 +100,27 @@ create_folders(
 # Prints the initial UI elements
 print(language_module.browser + browser)
 print(language_module.encrypt1)
-logo(colorScheme, "", version, config)
-print()
-configUpdateStuff(colorScheme, config, browser, language_module, argument)
+if not any(vars(argument).values()):
+    from modules.cligui import run_cli_gui
+    selected_option = run_cli_gui()
+    if selected_option == "Exit":
+        sys.exit(0)
+    elif selected_option == "Start Scan":
+        argument.scan = True
+    elif selected_option == "Web Scraping":
+        webscrape = True
+    elif selected_option == "Fast Mode":
+        fastMode = 1
+    elif selected_option == "Show All Results":
+        modes += "-a"
+    elif selected_option == "Show NSFW Sites":
+        modes += "-N"
+    elif selected_option == "Configure Settings":
+        config_editor(config, language_module)
+else:
+    logo(colorScheme, "", version, config)
+    print()
+    configUpdateStuff(colorScheme, config, browser, language_module, argument)
 
 # Handle command line arguments
 if argument.username:

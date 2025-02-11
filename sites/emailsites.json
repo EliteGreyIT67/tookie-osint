@@ -1,3 +1,4 @@
+
 {
     "Youtube": [
         {
@@ -10,21 +11,43 @@
         {
             "site": "https://monkeytype.com",
             "login": "https://monkeytype.com/login",
-            "error": "Email/password is incorrect or your account does not have password authentication enabled.",
-            "feilds": {
-                "login": "<input name=\"current-email\" type=\"email\" placeholder=\"email\" autocomplete=\"current-email\">",
-                "password": "<input name=\"current-password\" type=\"password\" placeholder=\"password\" autocomplete=\"current-password\">"
+            "error": "Email/password is incorrect",
+            "fields": {
+                "login": "<input name=\"current-email\" type=\"email\">",
+                "password": "<input name=\"current-password\" type=\"password\">"
             }
         }
     ],
-    "Twich": [
+    "GitHub": [
         {
-            "site": "https://www.twitch.tv",
-            "login": "https://www.twitch.tv/login",
-            "error": "We have disabled the ability to log in with your email address.",
-            "feilds": {
-                "login": "<input id=\"login-username\" aria-label=\"Enter your username\" type=\"text\" class=\"ScInputBase-sc-vu7u7d-0 ScInput-sc-19xfhag-0 gNGlOQ jsKSYr InjectLayout-sc-1i43xsx-0 eRDdjS tw-input\" autocapitalize=\"off\" autocorrect=\"off\" autocomplete=\"username\" data-a-target=\"tw-input\" value=\"\">",
-                "password": "<input id=\"password-input\" aria-label=\"Enter your password\" type=\"password\" class=\"ScInputBase-sc-vu7u7d-0 ScInput-sc-19xfhag-0 iXwnY jsKSYr InjectLayout-sc-1i43xsx-0 eRDdjS tw-input tw-input--password\" autocapitalize=\"off\" autocorrect=\"off\" autocomplete=\"current-password\" data-a-target=\"tw-input\" spellcheck=\"false\" value=\"\">"
+            "site": "https://github.com",
+            "login": "https://github.com/login",
+            "error": "Incorrect username or password",
+            "fields": {
+                "login": "<input type=\"text\" name=\"login\">",
+                "password": "<input type=\"password\" name=\"password\">"
+            }
+        }
+    ],
+    "LinkedIn": [
+        {
+            "site": "https://linkedin.com",
+            "login": "https://linkedin.com/login",
+            "error": "incorrect password",
+            "fields": {
+                "login": "<input type=\"email\" name=\"email\">",
+                "password": "<input type=\"password\" name=\"password\">"
+            }
+        }
+    ],
+    "Twitter": [
+        {
+            "site": "https://twitter.com",
+            "login": "https://twitter.com/login",
+            "error": "The email and password you entered did not match our records",
+            "fields": {
+                "login": "<input type=\"text\" name=\"session[username_or_email]\">",
+                "password": "<input type=\"password\" name=\"session[password]\">"
             }
         }
     ]

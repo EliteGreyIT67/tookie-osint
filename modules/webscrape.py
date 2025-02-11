@@ -92,7 +92,7 @@ class WebScraper:
             return None
 
     def email_scrape(self, email, language_module):
-        """Scan email across multiple sites"""
+        """Enhanced scan of email across multiple sites"""
         json_file_path = "sites/emailsites.json"
         data = WebScraper.load_json(json_file_path)
         results = []
@@ -100,29 +100,61 @@ class WebScraper:
         for site_name, site_list in data.items():
             site_data = site_list[0]
             login_url = site_data.get("login")
+            error_msg = site_data.get("error", "")
 
             try:
                 print(f"\nChecking {site_name}...")
                 response = self.session.get(login_url, timeout=10)
                 soup = BeautifulSoup(response.text, 'html.parser')
 
-                if "feilds" in site_data:
-                    login_field = site_data["feilds"].get("login")
-                    if login_field:
-                        email_input = soup.find('input', {'type': 'email'})
-                        results.append({
-                            "site": site_name,
-                            "url": login_url,
-                            "found": email_input is not None,
-                            "status": "Email input found" if email_input else "No email input found"
-                        })
+                # Check for email input field
+                email_input = soup.find('input', {'type': 'email'}) or \
+                            soup.find('input', {'name': contains('email')}) or \
+                            soup.find('input', {'id': contains('email')})
+
+                # Check for login form
+                login_form = soup.find('form', {'action': contains('login')}) or \
+                            soup.find('form', {'id': contains('login')})
+
+                # Test login attempt
+                if login_form and email_input:
+                    test_response = self.session.post(
+                        login_url,
+                        data={'email': email, 'password': 'dummy_password'},
+                        allow_redirects=True
+                    )
+                    
+                    account_exists = error_msg.lower() in test_response.text.lower()
+                else:
+                    account_exists = False
+
+                results.append({
+                    "site": site_name,
+                    "url": login_url,
+                    "found": email_input is not None,
+                    "login_form": login_form is not None,
+                    "account_exists": account_exists,
+                    "status": self._generate_status(email_input, login_form, account_exists)
+                })
 
             except Exception as e:
                 results.append({
                     "site": site_name,
                     "url": login_url,
                     "found": False,
+                    "login_form": False,
+                    "account_exists": False,
                     "status": f"Error: {str(e)}"
                 })
 
         return results
+
+    def _generate_status(self, email_input, login_form, account_exists):
+        if account_exists:
+            return "Account exists on this platform"
+        elif email_input and login_form:
+            return "Login form found with email field"
+        elif email_input:
+            return "Email input found"
+        else:
+            return "No email authentication found"

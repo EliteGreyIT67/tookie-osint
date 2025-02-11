@@ -16,6 +16,11 @@ def parse_args():
         action="store_true",
         help="Run tookie-osint with the webui"
     )
+    parser.add_argument(
+        "-g", "--gui",
+        action="store_true",
+        help="Run tookie-osint with GUI interface"
+    )
     return parser.parse_args()
 
 
@@ -33,15 +38,19 @@ def main():
 
     print(os.path.abspath(__file__))
     if args.webui:
-     if os.name == "nt":
-        os.system("python.exe webui/webui.py")
-     else:
-        os.system("python3 webui/webui.py")
+        if os.name == "nt":
+            os.system("python.exe webui/webui.py")
+        else:
+            os.system("python3 webui/webui.py")
+    elif args.gui:
+        from modules.gui import TookieGUI
+        gui = TookieGUI()
+        gui.run()
     else:    
-     if os.name == "nt":
-        os.system("python.exe brib.py")
-     else:
-        os.system("python3 brib.py")
+        if os.name == "nt":
+            os.system("python.exe brib.py")
+        else:
+            os.system("python3 brib.py")
 
 if __name__ == "__main__":
     main()

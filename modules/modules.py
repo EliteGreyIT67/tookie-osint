@@ -121,7 +121,11 @@ def qexit():
 
 
 def proxyCheck(colorScheme, modes, input1):
-    typeInput = input("TYPE: ⤷ ")
+    if config.getboolean('main', 'use_proxies', fallback=False):
+        typeInput = input("TYPE: ⤷ ")
+    else:
+        print("Proxy usage is disabled in config")
+        return None
     if typeInput != "":
         input2 = input("    IP: ⤷  ")
         if input2 == "":

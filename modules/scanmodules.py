@@ -43,8 +43,12 @@ def Startscan(
     date,
     language_module,
     randomheaders,
-    webhook_url
+    webhook_url,
+    rate_limit=1.5
 ):
+    # Add rate limiting between requests
+    if config.getboolean('main', 'enable_rate_limit', fallback=True):
+        time.sleep(rate_limit)
     try:
         if config["main"]["userandomuseragents"] == "no":
             header = {"User-Agent": config["Personalizations"]["useragent"]}

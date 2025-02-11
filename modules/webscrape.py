@@ -151,25 +151,52 @@ class WebScraper:
         return None    
    
     
-    def email_scrape():
-        # path the json file
+    def email_scrape(email, language_module):
+        """Scan email across multiple sites"""
         json_file_path = "sites/emailsites.json"
         data = WebScraper.load_json(json_file_path)
-        site_name = "Monkeytype"
-        if site_name not in data:
-            print(f"Site '{site_name}' not found.")
-            return None
-
-        site_data = data[site_name][0]
-        login_url = site_data.get("login")
-        error_message = site_data.get("error")
-        fields = site_data.get("feilds", {})
-        login_field = fields.get("login")
-        password_field = fields.get("password")
+        results = []
         
-        print(f"Login URL: {login_url}")
-        print(f"Error Message: {error_message}")
-        print(f"Login Field: {login_field}")
-        print(f"Password Field: {password_field}")
-        print("----------------------------------------------------------------")
+        for site_name, site_list in data.items():
+            site_data = site_list[0]
+            login_url = site_data.get("login")
+            error_message = site_data.get("error")
+            
+            try:
+                print(f"\nChecking {site_name}...")
+                
+                # Attempt to access login page
+                WebScraper.driver.get(login_url)
+                WebScraper.driver.implicitly_wait(2)
+                
+                # Look for login form fields
+                if "feilds" in site_data:
+                    login_field = site_data["feilds"].get("login")
+                    if login_field:
+                        # Check if email input exists
+                        try:
+                            email_input = WebScraper.driver.find_element(By.CSS_SELECTOR, 'input[type="email"]')
+                            results.append({
+                                "site": site_name,
+                                "url": login_url,
+                                "found": True,
+                                "status": "Email input found"
+                            })
+                        except:
+                            results.append({
+                                "site": site_name, 
+                                "url": login_url,
+                                "found": False,
+                                "status": "No email input found"
+                            })
+                            
+            except Exception as e:
+                results.append({
+                    "site": site_name,
+                    "url": login_url, 
+                    "found": False,
+                    "status": f"Error: {str(e)}"
+                })
+                
+        return results
 

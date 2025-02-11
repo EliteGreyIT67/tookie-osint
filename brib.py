@@ -133,13 +133,22 @@ else:
     
     email = re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', uname)
     if email:
-        print("Email OSINT isnt supported just yet.")
-        # remove exit when ready to send to full production
+        print("Starting Email OSINT scan...")
         email = True
-        # email_sites = get_site_names()
-        # print(email_sites)
-        # WebScraper.email_scrape()
-        print("Quitting.....")
+        scraper = WebScraper("Chrome")
+        results = scraper.email_scrape(uname, language_module)
+        
+        # Save results
+        with open(f"./reports/{uname}_email.txt", "w") as f:
+            f.write(f"Email OSINT Results for {uname}\n")
+            f.write("=" * 50 + "\n\n")
+            for result in results:
+                f.write(f"Site: {result['site']}\n")
+                f.write(f"URL: {result['url']}\n") 
+                f.write(f"Found: {result['found']}\n")
+                f.write(f"Status: {result['status']}\n\n")
+        
+        print(f"\nEmail scan complete. Results saved to ./reports/{uname}_email.txt")
         exit()
     else:
         pass

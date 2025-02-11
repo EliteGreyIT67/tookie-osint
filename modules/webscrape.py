@@ -1,3 +1,4 @@
+
 import logging
 import os
 import platform
@@ -15,6 +16,7 @@ class WebScraper:
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
 
+    @staticmethod
     def get_default_browser_windows():
         try:
             browser_key = r"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
@@ -25,6 +27,7 @@ class WebScraper:
         except Exception:
             return None
 
+    @staticmethod
     def get_default_browser_mac():
         try:
             command = "osascript -e 'get id of app id \"com.apple.Safari\"'"
@@ -36,6 +39,7 @@ class WebScraper:
         except Exception:
             return None
 
+    @staticmethod
     def get_default_browser_linux():
         try:
             browser = os.getenv("BROWSER")
@@ -49,6 +53,7 @@ class WebScraper:
         except Exception:
             return None
 
+    @staticmethod
     def get_default_browser():
         os_name = platform.system()
         if os_name == "Windows":
@@ -67,13 +72,14 @@ class WebScraper:
             text_content = soup.get_text()
 
             if target_error_message.lower() in text_content.lower():
-                return "Yes"
-            return "No"
+                return "Yes", response
+            return "No", response
 
         except Exception as e:
             print(f"{language_module.error11}{e}")
-            return None
+            return None, None
 
+    @staticmethod
     def load_json(file_path):
         try:
             with open(file_path, 'r') as file:
@@ -85,7 +91,7 @@ class WebScraper:
             print(f"Error: Failed to parse JSON - {e}")
             return None
 
-    def email_scrape(email, language_module):
+    def email_scrape(self, email, language_module):
         """Scan email across multiple sites"""
         json_file_path = "sites/emailsites.json"
         data = WebScraper.load_json(json_file_path)
